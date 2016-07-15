@@ -16,7 +16,7 @@ def remove_bg(cube_in,mask,cube_out):
 	Returns:
 	----------
 	mpdaf.obj.Cube 
-	corrected cube
+		corrected cube
 	"""
 
 	c=Cube(cube_in)
@@ -36,6 +36,9 @@ def remove_bg(cube_in,mask,cube_out):
     		for q in range(c.shape[2]):
         		med=np.ma.median(c.data[posmin:posmax,:,q])
         		c2.data.data[k,:,q]-=med
+
+	## Update Header
+	c2.primary_header.add_comment('This cube as been median subtracted.')
 
 	c2.write(cubeout)
 	
