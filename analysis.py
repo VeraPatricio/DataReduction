@@ -26,6 +26,19 @@ def mad(arr):
 
 
 def imlevels(imname,ZAPmask):	
+	""" Calculates the background, and corresponding standard deviation,
+	of an image. To be used in the colorbars.
+	Parameters
+	----------
+	imname: string
+		path to image
+	ZAPmask: mpdaf.obj.Image
+		mask with strong emission masked
+	Returns
+	----------
+	lmin, lmax: (float,float)
+		min and maximum levels to be aplied to a colorbar
+	"""
 
 	im = Image(imname)
 
@@ -48,6 +61,23 @@ def imlevels(imname,ZAPmask):
 	return (lmin,lmax)
 
 def makefits(cube,name):
+	""" Takes a cube and procuces some images and spectra in order to quicky accesss
+	data quality:
+		--- white light: sum all cube
+		--- Median band images : (4755,5755),(5755,6755),(6755,7755),(7755,8755),(8755,9345)
+		--- Narrow band images: (6297.33,7319,8399,8781.08,8916.08,9348)
+		--- BGC spectra: spectra of the brighests object in the center of the cube
+		--- BG spectra: spectra of an empty box of 10X10 pixels
+	Parameters
+	-----------
+	cube: mpdaf.obj.cube
+		data cube where images and spectra are going to be extracted
+	name: string
+		prefix to be added to the extrated images/spectra
+	Output
+	-----
+		white light, median and narrow band images, BGC and backgound spectra
+	"""
 
 	dir = 'DataQuality/'
 	if os.path.isdir(dir):
@@ -97,6 +127,21 @@ def makefits(cube,name):
 
 
 def makepdf(imname,lmin=None,lmax=None):	
+	""" Takes an image, opens it, plots it with an colorbar and saves
+	the images as a pdf.
+	Parameters
+	----------
+	imname: string
+		image to be open
+	lmin: float
+		minimum level of the colorbar
+	lmax: float
+		max level of the colorbar
+	Output
+	---------
+	pdf image
+	
+	"""
 
 	im = Image(imname)
 	plt.figure()
