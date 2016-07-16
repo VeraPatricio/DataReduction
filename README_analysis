@@ -6,32 +6,35 @@ how to use the analysis.py script:
 
 		cube_path	output_name
 
-	To keep tracks of things, it's advisable to keep also a 'ZAP_mask' column.
-
 	In order to keep it reasonable tidy, the output_name must be
 
 		Cluster name + some that says what the cube is (e.g. ZAP,CubeSharp,CubeFix_ZAP,ZAP_exp1...)
-
-	***There is a full list of the available images already done. Use this to make the input for --compare
-	and update this after a --images ***
 
 	
 	2) Make fits images
 
 	python analysis.py --images=True input_list
 
-	It produces a new folder in /data/vera/DataQuality/output_name
-	
-	it will crash if it already exists (it's on purpose...)
+	It produces a new folder in /data/vera/DataQuality/
 	
 	and some Narrow band, Medium band and spectra
 
+	        --- white light: sum all cube
+                --- Median band images : (4755,5755),(5755,6755),(6755,7755),(7755,8755),(8755,9345)
+                --- Narrow band images: (6297.33,7319,8399,8781.08,8916.08,9348)
+                --- BGC spectra: spectra of the brighests object in the center of the cube
+                --- BG spectra: spectra of an empty box of 10X10 pixels
+
 	
-	3) Produce Pdf
+	3) Produce pdf
 
 	python analysis.py --compare=True --mask='ZAP_mask.fits' input_list
 
 	produces a pdf with the results
+
+	4) Can be used at the same time:
+
+	python analysis.py --images=True --compare=True --mask='ZAP_mask.fits' input_list
 
 	
 
