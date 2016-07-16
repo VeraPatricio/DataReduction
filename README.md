@@ -6,3 +6,4 @@ Some scripts to perform data reduction on MUSE cubes
 
 ** analysis.py: takes a list of cubes and produces narrow bands and pdfs to quickly check the reduced data
 
+** update_version.py: updated the cube's header with a version number
