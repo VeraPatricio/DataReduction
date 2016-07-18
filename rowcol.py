@@ -59,5 +59,5 @@ if __name__ == "__main__":
                 sys.exit()
 
 	
-	remove_bg(arg.cube_in,arg.mask,arg.cube_out)
+	remove_bg(args.cube_in,args.mask,args.cube_out)
 
