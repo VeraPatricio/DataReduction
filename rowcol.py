@@ -43,3 +43,21 @@ def remove_bg(cube_in,mask,cube_out):
 	c2.write(cubeout)
 	
 	return c2
+
+if __name__ == "__main__":
+
+        parser = argparse.ArgumentParser()
+        parser.add_argument("cube_in", type=str, help='path to input cube to be corrected')
+        parser.add_argument("mask",type=float, help = 'path to mask to be used')
+        parser.add_argument("cube_out", type=str, help = 'path to the output (corrected) cube')
+        args = parser.parse_args()
+
+        if len(vars(args)) < 3:
+
+                print 'Missing argument'
+                print 'Usage: python rowcol.py cube_in mask cube_out'
+                sys.exit()
+
+	
+	remove_bg(arg.cube_in,arg.mask,arg.cube_out)
+
