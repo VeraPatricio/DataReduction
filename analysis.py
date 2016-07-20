@@ -161,7 +161,7 @@ if __name__ == "__main__":
 	if len(vars(args)) < 2:
 
         	print 'Missing argument'
-        	print 'Usage: reduction_log.py inputlist --images --compare --mask \n where list is contains cube_path  and output_name'
+        	print 'Usage: reduction_log.py inputlist --images --compare --mask \n where list is contains cube_path  and output_name (TAB SEPARATED!)'
         	sys.exit()	
 
 	now = datetime.datetime.now()
@@ -191,7 +191,7 @@ if __name__ == "__main__":
     		sufixmb=[]
    		sufixwhite=[]
 
-                mpagesize=max(int(20.0/len(t['output_name'])),10)
+                mpagesize=max(int(19.0/len(t['output_name'])),10)
 
 		##Search for files
 		for p in t['output_name']:

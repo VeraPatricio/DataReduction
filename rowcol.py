@@ -26,7 +26,8 @@ def remove_bg(cube_in,mask,cube_out):
 
 	c2=c.copy()
 	mask = immask.data.astype(bool)
-	c.data.mask[:, mask] = False
+	mask_inv = np.invert(mask)
+	c.data.mask[:, mask_inv] = True
 
 	for k in range(c.shape[0]):
     		print k," out of ",c.shape[0]
