@@ -191,7 +191,7 @@ if __name__ == "__main__":
     		sufixmb=[]
    		sufixwhite=[]
 
-                mpagesize=max(int(19.0/len(t['output_name'])),10)
+                mpagesize=max(int(18.0/len(t['output_name'])),10)
 
 		##Search for files
 		for p in t['output_name']:
@@ -380,3 +380,4 @@ Backgound Spectra
 		os.remove('Reduction.log')
 		os.remove('Reduction.tex')
 		os.remove('Reduction.aux')
+		os.remove('DataQuality/*pdf')
