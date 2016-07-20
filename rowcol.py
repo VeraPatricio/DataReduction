@@ -41,7 +41,7 @@ def remove_bg(cube_in,mask,cube_out):
         		c2.data.data[k,:,q]-=med
 
 	## Update Header
-	c2.primary_header.add_comment('This cube as been median subtracted.')
+	c2.primary_header.add_comment('This cube has been median subtracted')
 
 	c2.write(cube_out)
 	
