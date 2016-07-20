@@ -380,4 +380,6 @@ Backgound Spectra
 		os.remove('Reduction.log')
 		os.remove('Reduction.tex')
 		os.remove('Reduction.aux')
-		os.remove('DataQuality/*pdf')
+		pdffiles = glob.glob('DataQuality/*pdf')
+		for f in pdffiles:
+    			os.remove(f)
