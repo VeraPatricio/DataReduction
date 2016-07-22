@@ -76,19 +76,18 @@ if __name__ == "__main__":
         parser.add_argument("cube_in", type=str, help='path to input cube to be corrected')
         parser.add_argument("mask",type=str, help = 'path to mask to be used. Image with 1 for \									masked regions and 0 for regions to be used to calculate the meadian background (same as ZAP)')
         parser.add_argument("cube_out", type=str, help = 'path to the output (corrected) cube')
-	parser.add_argument("multip",type=int,help='Uses python multiprocessing (1) or not (0)')
         args = parser.parse_args()
 	
-        if len(vars(args)) < 4:
+        if len(vars(args)) < 3:
 
                 print 'Missing argument'
-                print 'Usage: python rowcol.py cube_in mask cube_out multip'
+                print 'Usage: python rowcol.py cube_in mask cube_out'
                 sys.exit()
 
 	
-	if args.multip == 1:
+	else:
 
-		print('Using multiprocessing')	
+		print'Using multiprocessing')	
 		c=Cube(args.cube_in)
         	immask = Image(args.mask)
 
@@ -120,11 +119,8 @@ if __name__ == "__main__":
         	c.primary_header.add_comment('This cube has been median subtracted')
 		c.write(args.cube_out)
 
-	if args.multip == 0:
+	#if args.multip == 0:
 
-		remove_bg(args.cube_in,args.mask,args.cube_out)
-
-	else:
-		print '1 or 0 for multip option'
+	#	remove_bg(args.cube_in,args.mask,args.cube_out)
 
 
