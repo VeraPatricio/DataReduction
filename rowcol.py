@@ -1,23 +1,27 @@
 from mpdaf.obj import Cube,Image,iter_ima
 import numpy as np
 from multiprocessing import Process
-#from multiprocessing import Pool
+from multiprocessing import Pool
+from multiprocessing import Array
+import multiprocessing as mtp
 import argparse
 import time
 
-def rm_bg_multiproc(k,cube_in,cube_out):
-
+def rm_bg_multiproc(k,cube_in,dummy_im,return_dict):
+	
         posmin=max(k-25,0)
         posmax=min(c.shape[0],k+25)
         for p in range(c.shape[1]):
         	med=np.ma.median(c.data[posmin:posmax,p,:])
-                c2.data.data[k,p,:]-=med
+                dummy_im.data.data[p,:]+=med
         for q in range(c.shape[2]):
                 med=np.ma.median(c.data[posmin:posmax,:,q])
-         	c2.data.data[k,:,q]-=med
+         	dummy_im.data.data[:,q]+=med
+
+	return_dict[k] = dummy_im.data.data[:,:]
 
 def dummy_function(i):
-	return rm_bg_multiproc(i,c,c2)
+	return rm_bg_multiproc(i,c,dummy_im,return_dict)
 
 
 def remove_bg(cube_in,mask,cube_out):
@@ -56,6 +60,7 @@ def remove_bg(cube_in,mask,cube_out):
     		for q in range(c.shape[2]):
         		med=np.ma.median(c.data[posmin:posmax,:,q])
         		c2.data.data[k,:,q]-=med
+
 	tend = time.time()
         print('ellapsed time %s'%(tend-tstart))
 
@@ -69,7 +74,7 @@ if __name__ == "__main__":
 
         parser = argparse.ArgumentParser()
         parser.add_argument("cube_in", type=str, help='path to input cube to be corrected')
-        parser.add_argument("mask",type=str, help = 'path to mask to be used')
+        parser.add_argument("mask",type=str, help = 'path to mask to be used. Image with 1 for \									masked regions and 0 for regions to be used to calculate the meadian background (same as ZAP)')
         parser.add_argument("cube_out", type=str, help = 'path to the output (corrected) cube')
 	parser.add_argument("multip",type=int,help='Uses python multiprocessing (1) or not (0)')
         args = parser.parse_args()
@@ -87,24 +92,33 @@ if __name__ == "__main__":
 		c=Cube(args.cube_in)
         	immask = Image(args.mask)
 
-        	c2=c.copy()
         	mask = immask.data.astype(bool)
         	mask_inv = np.invert(mask)
         	c.data.mask[:, mask_inv] = True
+		
+		manager = mtp.Manager()
+        	return_dict = manager.dict()
 	
 		tstart = time.time()
-		#pool = Pool(processes=4)
+		#pool = Pool(processes=20)
 		#pool.map(dummy_function, range(c.shape[0]))     
+		dummy_im = c[0]	
+		dummy_im.data.data[:,:] = 0
+		
                 for i in range(0,c.shape[0]):   
-                        p = Process(target=rm_bg_multiproc, args=(i,c,c2))
-                        p.start()
+                        p = Process(target=rm_bg_multiproc, args=(i,c,dummy_im,return_dict))
+			p.start()
 
 		tend = time.time()
                 print('ellapsed time %s'%(tend-tstart))
 
+		c.unmask()
+		for k in range(c.shape[0]):
+			c.data.data[k,:,:] = c.data.data[k,:,:] - return_dict[k]
+
 		## Update Header
-        	c2.primary_header.add_comment('This cube has been median subtracted')
-		c2.write(args.cube_out)
+        	c.primary_header.add_comment('This cube has been median subtracted')
+		c.write(args.cube_out)
 
 	if args.multip == 0:
 
