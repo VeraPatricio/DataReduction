@@ -152,7 +152,7 @@ def makepdf(imname,lmin=None,lmax=None):
 if __name__ == "__main__":
 	    
 	parser = argparse.ArgumentParser()
-	parser.add_argument("inputlist", type=str, help = 'List with cube paths and respective prefixes to be used in the output images')
+	parser.add_argument("inputlist", type=str, help = 'List with cube paths and respective prefixes to be used in the output images. It has to contain header with cube_path and output_name keywords and columns to be tab separated')
 	parser.add_argument("--images", help = 'Produces the White light, Narrow band and Median band images (fits file)')
 	parser.add_argument("--compare", help = 'Produces a pdf with side-by-side images of the cubes. REQUIRES MASK ARGUMENT')
 	parser.add_argument("--mask",help = 'Mask to be used to estimate the image levels (same as ZAP mask)')

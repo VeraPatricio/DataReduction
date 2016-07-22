@@ -58,12 +58,11 @@ def measure_psf(im,ra,dec):
         	## Fit all the objects
         	for r,d in zip(ra,dec):
 			(p,q) = im.wcs.sky2pix((d,r))[0]
-
-                	gfit = im.gauss_fit(center=(d,r),pos_min=(d-radii,r-radii),pos_max=(d+radii,r+radii),
+                	gfit = im.gauss_fit(center=(p,q),pos_min=(p-radii,q-radii),pos_max=(p+radii,q+radii),
 				unit_center=None,circular=True,verbose=0,plot=True)
                		gfwhm.append(gfit.fwhm[0])
 			try:
-                		fit = im.moffat_fit(center=gfit.center,pos_min=(d-radii,r-radii),pos_max=(d+radii,r+radii),
+                		fit = im.moffat_fit(center=gfit.center,pos_min=(p-radii,q-radii),pos_max=(p+radii,q+radii),
 					unit_center=None,circular=True,verbose=0)
                 		n.append(fit.n)
                 		fwhm.append(fit.fwhm[0])
@@ -80,9 +79,6 @@ def measure_psf(im,ra,dec):
         mean_n = np.nanmean(n)
         std_n = np.nanstd(n)
 	
-	print('Finished star loop')
-        print(mean_gfwhm,std_gfwhm,mean_fwhm,std_fwhm,mean_n,std_n)
-
         return (mean_gfwhm,std_gfwhm,mean_fwhm,std_fwhm,mean_n,std_n)
 
 
@@ -103,7 +99,7 @@ if __name__ == "__main__":
 	f.write('--------------------------------------------------------------------------------------------------------\n')
 
 	## Read star list and open output results
-        id,dec,ra = np.loadtxt(args.star_list,unpack=True)
+        id,ra,dec = np.loadtxt(args.star_list,unpack=True)
 	
 	## Load cube and bin 
 	c = Cube(args.cube)
@@ -121,7 +117,6 @@ if __name__ == "__main__":
                         %(gfwhm,std_gfwhm,n,std_n,fwhm,std_fwhm, alpha,err_alpha))
 	f.write('--------------------------------------------------------------------------------------------------------\n')
 		
-
 	for k in range(0,c.shape[0]):
 		print('Measusing %s out of 5 slices'%k)
 		im = c[k]
