@@ -87,7 +87,7 @@ if __name__ == "__main__":
 	
 	else:
 
-		print'Using multiprocessing')	
+		print('Using multiprocessing')	
 		c=Cube(args.cube_in)
         	immask = Image(args.mask)
 
