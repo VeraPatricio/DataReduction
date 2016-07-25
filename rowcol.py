@@ -32,7 +32,7 @@ def remove_bg(cube_in,mask,cube_out):
 	cube_in: string
 		path to input cube to be corrected
 	mask:	 string
-		path to mask to be used. Image with 1 for masked regions and 0 for regions
+		path to mask to be used. Image with 0 for masked regions and 1 for regions
 		to be used to calculate the meadian background (same as ZAP).
 	cube_out: string
 		path to the output (corrected) cube
