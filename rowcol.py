@@ -101,7 +101,7 @@ if __name__ == "__main__":
 		tstart = time.time()
 		#pool = Pool(processes=20)
 		#pool.map(dummy_function, range(c.shape[0]))     
-		dummy_im = c[0]	
+		dummy_im = c[0,:,:]	
 		dummy_im.data.data[:,:] = 0
 		
                 for i in range(0,c.shape[0]):   
