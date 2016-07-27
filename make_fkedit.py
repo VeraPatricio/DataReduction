@@ -2,9 +2,10 @@ import numpy as np
 import argparse
 import os
 import glob
+import sys
 from mpdaf.obj import Image
 
-def make_fkedit_file(prefix_original,ra_original,dec_original):
+def make_fkedit_file(prefix_original):
 	""" Calculates the offsets to be applied from the scamp output and 
 	makes the corresponding fkedit file. A 'cata' folder with the 
 	IMAGESX.head output is required.
@@ -12,10 +13,6 @@ def make_fkedit_file(prefix_original,ra_original,dec_original):
 	----------
 	prefix_original:	str
 		prefix of the original images (example: IMAGE_FOV_SKYSUB_)
-	ra_original: 	float
-		ra of the original images (the first one for example)
-	dec_original: 	float
-		dec of the original images 
 	Output:
 	-------
 		fkedit executable
@@ -40,10 +37,10 @@ def make_fkedit_file(prefix_original,ra_original,dec_original):
 	imlist = glob.glob(prefix_original+'*fits')
 	for i,imname in enumerate(imlist):
 		im = Image(imname)
-		good_ra = im.primary_header['RA']+ crval1[i] - ra_original
+		good_ra = im.primary_header['RA']+ crval1[i] - im.data_header['CRVAL1']
 		f.write('fkedit -m RA -- %s PIXTABLE_REDUCED_%s.fits\n'%(good_ra,i+1))
 
-		good_dec = im.primary_header['DEC']+ crval2[i] - dec_original
+		good_dec = im.primary_header['DEC']+ crval2[i] - im.data_header['CRVAL2']
 		if good_dec <0:
 			f.write('fkedit -m DEC -- %s PIXTABLE_REDUCED_%s.fits\n'%(good_dec,i+1))
 		else:
@@ -59,16 +56,14 @@ if __name__ == "__main__":
 
         parser = argparse.ArgumentParser()
         parser.add_argument("prefix_original", type=str, help='prefix of the original images (example: IMAGE_FOV_SKYSUB_)')
-        parser.add_argument("ra_original",type=float, help = 'ra of the original images')
-        parser.add_argument("dec_original",type=float, help = 'dec of the original images')
         args = parser.parse_args()
 
-        if len(vars(args)) < 3:
+        if len(vars(args)) < 1:
 
                 print 'Missing argument'
-                print 'Usage: python make_fkedit.py prefix_original ra_original dec_original'
+                print 'Usage: python make_fkedit.py prefix_original'
                 sys.exit()
 
 	else:
 		
-		make_fkedit_file(args.prefix_original,args.ra_original,args.dec_original)
+		make_fkedit_file(args.prefix_original)

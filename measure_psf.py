@@ -103,7 +103,7 @@ if __name__ == "__main__":
 	
 	## Load cube and bin 
 	c = Cube(args.cube)
-	c = c.rebin_mean((2*368,1,1))
+	c = c.rebin((2*368,1,1))
 	sample_fwhm = []
 	sample_gfwhm= []
 	sample_n = []
