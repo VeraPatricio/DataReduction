@@ -24,7 +24,7 @@ def dummy_function(i):
 	return rm_bg_multiproc(i,c,dummy_im,return_dict)
 
 
-def remove_bg(cube_in,mask,cube_out):
+def remove_bg(cube_in,mask,cube_out,invert=False):
 	""" Corrects background of a cube to zero (per wavelengh plane)
 	Strong emission (e.g. cluster members) should be masked.
 	Parameters:
@@ -32,10 +32,12 @@ def remove_bg(cube_in,mask,cube_out):
 	cube_in: string
 		path to input cube to be corrected
 	mask:	 string
-		path to mask to be used. Image with 0 for masked regions and 1 for regions
-		to be used to calculate the meadian background (old version of ZAP).
+		path to mask to be used. Image with 1 for masked regions (objects) 
+		and 0 for regions to be used to calculate the meadian background (sky)'
 	cube_out: string
 		path to the output (corrected) cube
+	invert: boolean
+		if True, 0 for masked regions (objects) and 1 for sky (old ZAP version)
 	Returns:
 	----------
 	mpdaf.obj.Cube 
@@ -47,8 +49,9 @@ def remove_bg(cube_in,mask,cube_out):
 
 	c2=c.copy()
 	mask = immask.data.astype(bool)
-	mask_inv = np.invert(mask)
-	c.data.mask[:, mask_inv] = True
+	if invert:
+		mask = np.invert(mask)
+	c.data.mask[:, mask] = True
 
 	tstart = time.time()
 	for k in range(c.shape[0]):
@@ -74,14 +77,15 @@ if __name__ == "__main__":
 
         parser = argparse.ArgumentParser()
         parser.add_argument("cube_in", type=str, help='path to input cube to be corrected')
-        parser.add_argument("mask",type=str, help = 'path to mask to be used. Image with 1 for \									masked regions and 0 for regions to be used to calculate the meadian background (same as ZAP)')
+        parser.add_argument("mask",type=str, help = 'mask to be used. Image with 1 for masked regions (objects) and 0 for regions to be used to calculate the meadian background (sky)')
         parser.add_argument("cube_out", type=str, help = 'path to the output (corrected) cube')
+        parser.add_argument("--invert", type=str, help = 'if True, 0 for masked regions (objects) and 1 for sky (old ZAP version)')
         args = parser.parse_args()
 	
         if len(vars(args)) < 3:
 
                 print 'Missing argument'
-                print 'Usage: python rowcol.py cube_in mask cube_out'
+                print 'Usage: python rowcol.py cube_in mask cube_out --invert'
                 sys.exit()
 
 	
@@ -92,9 +96,11 @@ if __name__ == "__main__":
         	immask = Image(args.mask)
 
         	mask = immask.data.astype(bool)
-        	mask_inv = np.invert(mask)
-        	c.data.mask[:, mask_inv] = True
-		
+		if args.invert:
+			print('Using inverted mask')
+        		mask = np.invert(mask)
+        	c.data.mask[:, mask] = True
+
 		manager = mtp.Manager()
         	return_dict = manager.dict()
 	
@@ -103,10 +109,11 @@ if __name__ == "__main__":
 		#pool.map(dummy_function, range(c.shape[0]))     
 		dummy_im = c[0,:,:]	
 		dummy_im.data.data[:,:] = 0
-		
-                for i in range(0,c.shape[0]):   
-                        p = Process(target=rm_bg_multiproc, args=(i,c,dummy_im,return_dict))
-			p.start()
+
+		for i in range(0,c.shape[0]):
+                	p = Process(target=rm_bg_multiproc, args=(i,c,dummy_im,return_dict))
+                        p.start()
+
 
 		tend = time.time()
                 print('ellapsed time %s'%(tend-tstart))

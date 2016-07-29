@@ -24,11 +24,11 @@ def do_zap_mask(imname,out,sig=7):
 	im = Image(imname)
 	bg,std = im.background()
 		
-	mask = im.fftconvolve_gauss(fwhm=(0.6,0.6))
+	mask = im.fftconvolve_gauss(fwhm=(0.7,0.7))
 	
 	mask = mask > bg+sig*std
-	im[np.where(mask.data.mask == False)] = 0
-	im[np.where(mask.data.mask == True)] = 1
+	im[np.where(mask.data.mask == False)] = 1
+	im[np.where(mask.data.mask == True)] = 0
 	
 	plt.figure()
 	mask.plot()
