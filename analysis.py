@@ -94,7 +94,7 @@ def makefits(cube,name):
         limMB = ((4755,5755),(5755,6755),(6755,7755),(7755,8755),(8755,9345))
         for l in range(len(limMB)):
 
-                im  = cube.get_lambda(limMB[l][0],limMB[l][1]).mean(axis=0)
+                im  = cube.select_lambda(limMB[l][0],limMB[l][1]).mean(axis=0)
                 im.write(dir+name+'_MB_'+str(limMB[l][0])+'_'+str(limMB[l][1])+'.fits')
 	
         # Narrow band images
@@ -107,6 +107,7 @@ def makefits(cube,name):
 	# BCG spectrum
 	smooth = white.gaussian_filter(5)
 	max_p,max_q = np.where(smooth.data.data == np.max(smooth.data.data[100:200,100:200]))
+	print('Extracting BGC spectra at %s %s'%(max_p,max_q))
 	sp_CM = cube[:,max_p-3:max_p+3,max_q-3:max_q+3].sum(axis=(1,2))
 	sp_CM.write(dir+name+'_CM_sp.fits')
 
