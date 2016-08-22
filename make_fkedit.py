@@ -3,7 +3,27 @@ import argparse
 import os
 import glob
 import sys
+import re
 from mpdaf.obj import Image
+
+### Anonying functions to sort files in a human-friendy way
+def tryint(s):
+    try:
+        return int(s)
+    except:
+        return s
+    
+def alphanum_key(s):
+    """ Turn a string into a list of string and number chunks.
+        "z23a" -> ["z", 23, "a"]
+    """
+    return [ tryint(c) for c in re.split('([0-9]+)', s) ]
+
+def sort_nicely(l):
+    """ Sort the given list in the way that humans expect.
+    """
+    l.sort(key=alphanum_key)
+#######
 
 def make_fkedit_file(prefix_original):
 	""" Calculates the offsets to be applied from the scamp output and 
@@ -35,6 +55,7 @@ def make_fkedit_file(prefix_original):
 	crval2 = crval2[~np.isnan(crval2)] ## Clean from nan
 
 	imlist = glob.glob(prefix_original+'*fits')
+	sort_nicely(imlist)
 	for i,imname in enumerate(imlist):
 		im = Image(imname)
 		good_ra = im.primary_header['RA']+ crval1[i] - im.data_header['CRVAL1']
